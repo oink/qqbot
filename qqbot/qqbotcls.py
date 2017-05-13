@@ -164,12 +164,13 @@ class QQBot(GroupManager):
             INFO('来自 %s 的系统消息： "%s"', contact, content)
             return
 
-        if self.detectAtMe(nameInGroup, content):
-            INFO('有人 @ 我：%s[%s]' % (contact, member))
-            content = '[@ME] ' + content.replace('@'+nameInGroup, '')
-        else:
-            content = content.replace('@ME', '@Me')
-                
+        if self.conf.detectAtMe:
+            if self.detectAtMe(nameInGroup, content):
+                INFO('有人 @ 我：%s[%s]' % (contact, member))
+                content = '[@ME] ' + content.replace('@'+nameInGroup, '')
+            else:
+                content = content.replace('@ME', '@Me')
+
         if ctype == 'buddy':
             INFO('来自 %s 的消息: "%s"' % (contact, content))
         else:

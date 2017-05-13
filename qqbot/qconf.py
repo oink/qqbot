@@ -48,6 +48,9 @@ sampleConfStr = '''{
         # 完成全部联系人列表获取之后才启动 QQBot 
         "startAfterFetch" : False,
         
+        # @ME 检测
+        "detectAtMe" : True,
+
         # 插件目录
         "pluginPath" : ".",
         
@@ -78,6 +81,7 @@ sampleConfStr = '''{
     #     "debug" : False,
     #     "restartOnOffline" : False,
     #     "startAfterFetch" : False,
+    #     "detectAtMe" : True,
     #     "pluginPath" : "",
     #     "plugins" : [],
     #     "pluginsConf" : {}
@@ -97,6 +101,7 @@ rootConf = {
     "debug" : False,
     "restartOnOffline" : False,
     "startAfterFetch" : False,
+    "detectAtMe" : True,
     "pluginPath" : "",
     "plugins" : [],
     "pluginsConf" : {},
@@ -167,6 +172,7 @@ QQBot 机器人
   其他：
     -cq, --cmdQrcode        以文本模式显示二维码
     -saf, --startAfterFetch 全部联系人资料获取完成后再启动 QQBot
+    -@, --noatme            禁用 @ME 检测
     -pp PLUGINPATH, --pluginPath PLUGINPATH
                             设置插件目录
     -pl PLUGINS, --plugins PLUGINS
@@ -232,6 +238,9 @@ class QConf(object):
         parser.add_argument('-saf', '--startAfterFetch',
                             action='store_true', default=None)
 
+        parser.add_argument('-n@', '--noatme',
+                            action='store_true', default=None)
+
         parser.add_argument('-pp', '--pluginPath')
 
         parser.add_argument('-pl', '--plugins')
@@ -252,9 +261,13 @@ class QConf(object):
         if opts.norestart:
             opts.restartOnOffline = False
         
+        if opts.noatme:
+            opts.detectAtMe = False
+
         delattr(opts, 'nodebug')
         delattr(opts, 'norestart')
-        
+        delattr(opts, 'noatme')
+
         if not opts.bench:
             opts.bench = os.path.join(os.path.expanduser('~'), '.qqbot-tmp')
         
@@ -402,6 +415,7 @@ class QConf(object):
         INFO('启动方式：%s',
              self.startAfterFetch and '慢启动（联系人列表获取完成后再启动）'
                                    or '快速启动（登录成功后立即启动）')
+        INFO('@ME检测：%s', self.detectAtMe and '开启' or '关闭')
         self.pluginPath and INFO('插件目录0：%s', self.pluginPath)
         self.pluginPath1 and INFO('插件目录1：%s', self.pluginPath1)
         INFO('启动时需要加载的插件：%s', self.plugins)
