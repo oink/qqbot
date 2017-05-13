@@ -7,7 +7,7 @@ if p not in sys.path:
 
 import os, platform, uuid, subprocess, time
 
-from qqbot.utf8logger import WARN, INFO, DEBUG, ERROR
+from qqbot.utf8logger import EXCEPTION, WARN, INFO, DEBUG, ERROR
 from qqbot.common import StartDaemonThread, LockedValue, HasCommand, SYSTEMSTR2STR
 from qqbot.qrcodeserver import QrcodeServer
 from qqbot.mailagent import MailAgent
@@ -79,7 +79,7 @@ class QrcodeManager(object):
             try:
                 showCmdQRCode(self.qrcodePath)
             except Exception as e:
-                WARN('无法以文本模式显示二维码图片 file://%s 。%s',
+                EXCEPTION('无法以文本模式显示二维码图片 file://%s 。%s',
                      SYSTEMSTR2STR(self.qrcodePath), e)
         
         if not (self.qrcodeServer or self.mailAgent or self.cmdQrcode):

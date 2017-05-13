@@ -68,7 +68,7 @@ def EnableLog():
 
 _thisDict = globals()
 
-for name in ('CRITICAL', 'ERROR', 'WARN', 'INFO', 'DEBUG'):
+for name in ('CRITICAL', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'EXCEPTION'):
     _thisDict[name] = getattr(utf8Logger, name.lower())
 
 if PY3:
