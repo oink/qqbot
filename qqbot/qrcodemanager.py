@@ -112,6 +112,7 @@ class QrcodeManager(object):
                         smtp.send(png_content=qrcode, **self.qrcodeMail)
                 except Exception as e:
                     WARN('无法将二维码发送至邮箱%s %s', self.mailAgent.account, e, exc_info=True)
+                    time.sleep(60)
                 else:
                     INFO('已将二维码发送至邮箱%s', self.mailAgent.account)
                     if self.qrcodeServer:
