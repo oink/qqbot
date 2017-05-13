@@ -125,7 +125,8 @@ class QQBot(GroupManager):
   
         StartDaemonThread(self.pollForever)
         StartDaemonThread(self.intervalForever)
-        StartDaemonThread(QTermServer(self.conf.termServerPort, self.onTermCommand).Run)
+        if self.conf.termServerPort:
+            StartDaemonThread(QTermServer(self.conf.termServerPort, self.onTermCommand).Run)
 
         self.started = True
         MainLoop()
