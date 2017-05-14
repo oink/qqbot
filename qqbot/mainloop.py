@@ -23,6 +23,7 @@ def workAt(taskQueue):
                 raise
             except:
                 traceback.print_exc()
+            taskQueue.task_done()
 
 class TaskLoop(object):
     def __init__(self):
