@@ -11,7 +11,7 @@ from email.encoders import encode_base64
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
-from email.utils import parseaddr, formataddr
+from email.utils import formataddr
 from email.header import Header, decode_header
 
 from qqbot.common import PY3
@@ -32,12 +32,13 @@ SERVER_LIB = {
 }
 
 if not PY3:
-    def format_addr(s):
-        name, addr = parseaddr(s.decode('utf8'))
-        return formataddr((
-            Header(name, 'utf8').encode(),
-            addr.encode('utf8') if isinstance(addr, str) else addr
-        ))
+    def format_addr(target):
+        (name, addr) = target
+        name = Header(name.decode('utf8'), 'utf8').encode()
+        addr = Header(addr.decode('utf8'), 'utf8').encode()
+        return formataddr((name, addr))
+else:
+    format_addr = formataddr
 
 class MailAgent(object):
     def __init__(self, account, auth_code, name='', **config):
@@ -52,7 +53,7 @@ class MailAgent(object):
         self.__dict__.update(SERVER_LIB.get(server_name, {}))
         self.__dict__.update(config)
 
-        self.name = '%s <%s>' % (name or account_name, account)
+        self.name = (name or account_name, account)
         self.account = account
         self.auth_code = auth_code
         
@@ -103,14 +104,11 @@ class SMTP(object):
 
         msg = MIMEMultipart()
         msg.attach(MIMEText(html, 'html', 'utf8'))
+        msg['From'] = format_addr(self.name)
+        msg['To'] = format_addr((to_name, to_addr))
         if not PY3:
-            msg['From'] = format_addr(self.name)
-            msg['To'] = format_addr('%s <%s>' % (to_name, to_addr))
-            msg['Subject'] = Header(subject.decode('utf8'), 'utf8').encode()
-        else:
-            msg['From'] = self.name
-            msg['To'] = '%s <%s>' % (to_name, to_addr)
-            msg['Subject'] = subject    
+            subject = subject.decode('utf8')
+        msg['Subject'] = Header(subject, 'utf-8')
         
         if png_content:
             m = MIMEBase('image', 'png', filename='x.png')
