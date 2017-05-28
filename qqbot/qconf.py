@@ -27,6 +27,9 @@ sampleConfStr = '''{
         # 二维码 http 服务器端口号
         "httpServerPort" : 8189,
         
+        # IRCServer 服务地址
+        "IRCServerAddress" : "127.0.0.1:6667",
+
         # 自动登录的 QQ 号
         "qq" : "3497303033",
         
@@ -74,6 +77,7 @@ sampleConfStr = '''{
     #     "termServerPort" : 8188,
     #     "httpServerIP" : "",
     #     "httpServerPort" : 8189,
+    #     "IRCServerAddress" : "127.0.0.1:6667",
     #     "qq" : "",
     #     "mailAccount" : "",
     #     "mailAuthCode" : "",
@@ -94,6 +98,7 @@ rootConf = {
     "termServerPort" : 8188,
     "httpServerIP" : "",
     "httpServerPort" : 8189,
+    "IRCServerAddress" : "127.0.0.1:6667",
     "qq" : "",
     "mailAccount" : "",
     "mailAuthCode" : "",
@@ -116,7 +121,7 @@ usage = '''\
 QQBot 机器人
 
 用法: {PROGNAME} [-h] [-d] [-nd] [-u USER] [-q QQ]
-          [-p TERMSERVERPORT] [-ip HTTPSERVERIP][-hp HTTPSERVERPORT]
+          [-i IRCSERVERADDRESS] [-p TERMSERVERPORT] [-ip HTTPSERVERIP][-hp HTTPSERVERPORT]
           [-m MAILACCOUNT] [-mc MAILAUTHCODE] [-r] [-nr]
           [-fi FETCHINTERVAL]
 
@@ -146,6 +151,10 @@ QQBot 机器人
     -p TERMSERVERPORT, --termServerPort TERMSERVERPORT
                             更改QTerm控制台的监听端口到 TERMSERVERPORT 。
                               默认的监听端口是 8188 (TCP)。
+
+  IRC 服务器设置:
+    -i IRCSERVERADDRESS, --IRCServerAddress IRCSERVERADDRESS
+                            指定IRC服务要监听在哪个IP:PORT上。
 
   HTTP二维码查看服务器设置:
   (请阅读说明文件以了解此HTTP服务器的详细信息。)
@@ -216,6 +225,8 @@ class QConf(object):
         parser.add_argument('-ip', '--httpServerIP')                            
 
         parser.add_argument('-hp', '--httpServerPort', type=int)        
+
+        parser.add_argument('-irc', '--IRCServerAddress')
 
         parser.add_argument('-m', '--mailAccount')
 
@@ -407,6 +418,7 @@ class QConf(object):
         INFO('二维码服务器 ip ：%s', self.httpServerIP or '无')       
         INFO('二维码服务器端口号：%s',
              self.httpServerIP and self.httpServerPort or '无')
+        INFO('IRC 服务器：%s', self.IRCServerAddress)
         INFO('用于接收二维码的邮箱账号：%s', self.mailAccount or '无')
         INFO('邮箱服务授权码：%s', self.mailAccount and '******' or '无')
         INFO('以文本模式显示二维码：%s', self.cmdQrcode and '是' or '否')
